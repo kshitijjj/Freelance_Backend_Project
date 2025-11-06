@@ -10,6 +10,7 @@ class Users(db.Model):
     created_at=db.Column(db.DateTime,default=datetime.utcnow)
     job_saved=db.Column(db.Integer,db.ForeignKey("jobs.id"))
     job_applied=db.Column(db.Integer,db.ForeignKey("jobs.id"))
+    role=db.Column(db.String,default="user")
 
     def generate_passwrod(self,password):
         self.password=generate_password_hash(password)

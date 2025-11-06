@@ -5,6 +5,7 @@ from Routes.auth import auth_bp
 from Models.Users import Users
 from Models.Jobs import Jobs
 from Routes.users import user_bp
+from Routes.admin import default_admin,admin_bp
 
 jwt=JWTManager()
 
@@ -20,9 +21,11 @@ def create_app():
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(admin_bp)
 
     with app.app_context():
         db.create_all()
+        default_admin()
 
     return app
 

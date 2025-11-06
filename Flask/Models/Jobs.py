@@ -8,3 +8,4 @@ class Jobs(db.Model):
     description=db.Column(db.String)
     salary=db.Column(db.Integer,nullable=False)
     created_at=db.Column(db.DateTime,default=datetime.utcnow)
+    role=db.Column(db.String,default="user")

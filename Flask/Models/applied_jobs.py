@@ -7,3 +7,4 @@ class Applied_Jobs(db.Model):
     job_id=db.Column(db.Integer,db.ForeignKey("jobs.id"))
     applied_at=db.Column(db.DateTime,default=datetime.utcnow)
     status=db.Column(db.String,nullable=False,default="Applied")
+    role=db.Column(db.String,default="user")

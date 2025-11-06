@@ -41,7 +41,7 @@ def login():
     if not is_password:
         return jsonify({"message":"Wrong password!!"}),401
     
-    token=create_access_token(identity=str(is_User.id))
+    token=create_access_token(identity=str(is_User.id),additional_claims={"role":is_User.role})
     return jsonify({"message":"User login successfully",
                     "token":token})
 
