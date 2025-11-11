@@ -20,12 +20,18 @@ def all_jobs():
 
     for jobs in required_jobs:
         all_jobs.append({
-            "id":jobs.id,
+            "id":jobs.job_id,
             "user_id":user_id,
-            "category":jobs.category,
-            "description":jobs.description,
-            "salary":jobs.salary,
-            "created_at":jobs.created_at
+            "company":jobs.company,
+            "work_type":jobs.work_type,
+            "job description":jobs.job_description,
+            "skills":jobs.skills,
+            "experience":jobs.experience,
+            "qualifications":jobs.qualifications,
+            "salary range":jobs.salary_range,
+            "location":jobs.location,
+            "company size":jobs.company_size,
+            "job posted at":jobs.job_posted_at
         })
 
     if len(all_jobs)==0:
@@ -38,12 +44,38 @@ def all_jobs():
 @jwt_required()
 def post_job():
     data=request.get_json()
-    job_category=data['category']
-    job_description=data['description']
-    salary=data['salary']
+    job_id=data['job_id']
+    company = data['company']
+    work_type = data['work_type']
+    job_title = data['job_title']
+    job_description = data['job_description']        
+    skills = data['skills']
+    experience = data['experience']
+    qualifications = data['qualifications']
+    salary_range = data['salary_range']                
+    location = data['location']
+    country=data['country']
+    company_size = data['company_size']
+    job_posted_at = data['job_posted_at']
 
     user_id=get_jwt_identity()
-    new_job=Jobs(user_id=user_id,category=job_category,description=job_description,salary=salary)
+
+    new_job=Jobs(
+        job_id=job_id,
+        user_id=user_id,
+        company=company,
+        work_type=work_type,
+        job_title=job_title,
+        job_description=job_description,
+        skills=skills,
+        experience=experience,
+        qualifications=qualifications,
+        salary_range=salary_range,
+        location=location,
+        country=country,
+        company_size=company_size,
+        job_posted_at=job_posted_at
+    )
     db.session.add(new_job)
     db.session.commit()
 
@@ -57,15 +89,16 @@ def saved_job(id):
     
     is_job=Saved_Jobs.query.filter(Saved_Jobs.job_id==id).first()
 
-    if is_job:
-        return jsonify({"message":"Job already saved"})
-    else:
+    if not is_job:
+        
         saved_job=Saved_Jobs(user_id=user_id,job_id=id,saved_at=datetime.utcnow())
-
-
         db.session.add(saved_job)
         db.session.commit()
-        return jsonify({"message":"Job Saved successfully"})
+        return jsonify({"message":"JOb saved"})
+    else:
+        return jsonify({"message":"job already added"})
+
+    
 
 # GET REQUEST TO APPLY THE JOB
 @user_bp.route("/jobs/apply/<int:id>",methods=['GET'])
@@ -89,31 +122,44 @@ def applied_job(id):
 @user_bp.route("/jobs/search",methods=['GET'])
 @jwt_required()
 def search_jobs():
-    category=request.args.get("category")
-    salary=request.args.get("salary")
-    date=request.args.get("date")
+    user_id=get_jwt_identity()
+    job_title=request.args.get("job_title")
+    salary_range=request.args.get("salary_range")
+    company=request.args.get("company")
+    location=request.args.get("location")
+    job_posted_at=request.args.get("job_posted_at")
 
     query=Jobs.query
 
-    if category:
-        query=query.filter(Jobs.category==category)
-    if salary:
-        query=query.filter(Jobs.salary<=salary)
-    if date:
-        correct_date=datetime.strptime(date,"%Y-%m-%d")
+    if job_title:
+        query=query.filter(Jobs.job_title==job_title)
+    if salary_range:
+        query=query.filter(Jobs.salary_range<=salary_range)
+    if job_posted_at:
+        correct_date=datetime.strptime(job_posted_at,"%Y-%m-%d")
         query=query.filter(Jobs.created_at<=correct_date)
-    
+    if company:
+        query=query.filter(Jobs.company==company)
+    if location:
+        query=query.filter(Jobs.location==location)
+
     selected_jobs=query.all()
     searched_jobs=[]
 
     for jobs in selected_jobs:
         searched_jobs.append({
-            "id":jobs.id,
+            "id":jobs.job_id,
             "user_id":jobs.user_id,
-            "category":jobs.category,
-            "description":jobs.description,
-            "salary":jobs.salary,
-            "created_at":jobs.created_at
+            "company":jobs.company,
+            "work_type":jobs.work_type,
+            "job description":jobs.job_description,
+            "skills":jobs.skills,
+            "experience":jobs.experience,
+            "qualifications":jobs.qualifications,
+            "salary range":jobs.salary_range,
+            "location":jobs.location,
+            "company size":jobs.company_size,
+            "job posted at":jobs.job_posted_at
         })
     
     return jsonify({"result":searched_jobs})

@@ -32,11 +32,18 @@ def all_jobs():
     
     for jobs in required_jobs:
         selected_jobs.append({
-            "id":jobs.id,
-            "category":jobs.category,
-            "description":jobs.description,
-            "salary":jobs.salary,
-            "created_at":jobs.created_at
+            "id":jobs.job_id,
+            "user_id":user_id,
+            "company":jobs.company,
+            "work_type":jobs.work_type,
+            "job description":jobs.job_description,
+            "skills":jobs.skills,
+            "experience":jobs.experience,
+            "qualifications":jobs.qualifications,
+            "salary range":jobs.salary_range,
+            "location":jobs.location,
+            "company size":jobs.company_size,
+            "job posted at":jobs.job_posted_at
         })
     return jsonify({"result":selected_jobs})
 
@@ -52,10 +59,20 @@ def post_jobs():
 
     for jobs in data:
         new_job=Jobs(
-            user_id=user_id,
-            category=jobs['category'],
-            description=jobs['description'],
-            salary=jobs['salary']
+            job_id=jobs['job_id'],
+            company = jobs['company'],
+            work_type = jobs['work_type'],
+            job_title = jobs['job_title'],
+            job_description = jobs['job_description']    ,    
+            skills = jobs['skills'],
+            experience = jobs['experience'],
+            qualifications = jobs['qualifications'],
+            salary_range = jobs['salary_range']  ,              
+            location = jobs['location'],
+            country=jobs['country'],
+            company_size = jobs['company_size'],
+            job_posted_at = jobs['job_posted_at']
+
         )
         db.session.add(new_job)
     db.session.commit()
